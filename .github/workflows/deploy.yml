@@ -1,0 +1,35 @@
+# メモ:
+# ConoHaの「国外IP制限」がONだとGitHub Actions(海外IP)から接続できない
+# ssh: handshake failed: EOF が出たらまず確認する
+
+name: Deploy codejump-store2 to ConoHa
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Upload files via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.PORT }}
+
+          source: "**"
+          exclude: ".git*,.github*,node_modules*"
+
+          target: "/home/c0522930/public_html/t-nakanishi-dev.com/works/html-css/codejump/store2"
+
+          strip_components: 0
+          
+          # debug: true   # トラブル時のみ有効化
